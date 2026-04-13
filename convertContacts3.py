@@ -1,6 +1,4 @@
-﻿#!/usr/bin/python2.5
-# -*- coding: utf-8 -*-
-"""
+﻿"""
 	VcfToCsvConverter v0.3 - Converts VCF/VCARD files into CSV
 	Copyright (C) 2009 Petar Strinic (http://petarstrinic.com)
 	Contributor -- Dave Dartt
@@ -25,7 +23,7 @@ import re
 import sys
 import glob
 import codecs
-from optparse import OptionParser, Option 
+from optparse import OptionParser, Option
 
 class VcfToCsvConverter:
 	def __outputQuote(self):
@@ -52,7 +50,7 @@ class VcfToCsvConverter:
 
 	def __trace(self, text):
 		if self.trace == True:
-			print text
+			print(text)
 
 	def __resetRow(self):
 		self.addressCount = { 'HOME' : 1, 'WORK' : 1 }
@@ -83,10 +81,10 @@ class VcfToCsvConverter:
 			if os.path.isdir(self.inputPath):
 				self.inputFileArray = glob.glob(os.path.join(self.inputPath, '*.vc[sf]') )
 			else:
-				print "Invalid path please try again"
+				print("Invalid path please try again")
 				sys.exit(2)
 		except IOError:
-			print "Directory is empty or does not contain any vcard format files."
+			print("Directory is empty or does not contain any vcard format files.")
 			sys.exit(2)
 
 	def __parseFile(self):
@@ -94,14 +92,14 @@ class VcfToCsvConverter:
 			for NewFileName in self.inputFile:
 				try:
 					if self.verbose:
-						print "Processing .... %s" % (NewFileName)
+						print("Processing .... %s" % (NewFileName))
 					inFile = codecs.open(NewFileName, 'r', 'utf-8', 'ignore')
 					theLine = inFile.readline()
 					for theLine in inFile:
 						self.__parseLine(theLine)
 					inFile.close()
 				except IOError:
-					print "error opening file during read operation: %s" % (NewFileName)
+					print("error opening file during read operation: %s" % (NewFileName))
 					sys.exit(2)
 				outFile = codecs.open(self.outputFile, 'w', 'utf-8', 'ignore')
 				outFile.write(self.output)
@@ -112,14 +110,14 @@ class VcfToCsvConverter:
 			for NewFileName in self.inputFileArray:
 				try:
 					if self.verbose:
-						print "Processing .... %s\n" % (NewFileName)
+						print("Processing .... %s\n" % (NewFileName))
 					inFile = codecs.open(NewFileName, 'r', 'utf-8', 'ignore')
 					theLine = inFile.readline()
 					for theLine in inFile:
 						self.__parseLine(theLine)
 					inFile.close()
 				except IOError:
-					print "error opening file during read operation via path: %s\n" % (NewFileName)
+					print("error opening file during read operation via path: %s\n" % (NewFileName))
 					sys.exit(2)
 			outFile.write(self.output)
 			outFile.close()
@@ -319,20 +317,30 @@ class VcfToCsvConverter:
 	def __processAddress(self, pre, p):
 		self.__trace("__processAddress: %s %s" % (pre, p))
 		self.__trace("_ADDRESS: %s" % (p))
+		a = ''
+		b = ''
+		address = ''
+		city = ''
+		state = ''
+		zip = ''
+		country = ''
 		try:
 			(a, b, address, city, state, zip, country ) = re.split("(?<!\\\\);",p)
 		except ValueError:
-			(a, b, address, city, state, zip ) = re.split("(?<!\\\\);",p)
+			try:
+				(a, b, address, city, state, zip ) = re.split("(?<!\\\\);",p)
+			except Exception:
+				pass
 			country = '';
 
 		addressType = "HOME"
 		try:
-			(a,addressTypes) = re.split("(?<!\\\\)=",pre[1]);
+			(a,addressTypes) = re.split("(?<!\\\\)=", pre[1]);
 			self.__trace("_addressTypes: %s " % addressTypes)
 			if "work" in (addressTypes.lower()).split(","):
 				self.__trace("_work address");
 				addressType = "WORK"
-		except ValueError:
+		except Exception:
 			self.__trace("_home address")
 
 		self.__trace(self.addressCount);
@@ -476,7 +484,7 @@ def main():
 					lines.append('--' + ln)
 
 		(options, args) = optionParser.parse_args(lines)
-		
+
 		# And re-parse argv[] on top of them to replace. BUT NULL options.config FIRST - DON'T WANT IF WAS IN CONFIG FILE!
 
 		options.config = None
@@ -493,11 +501,11 @@ def main():
 	if (options.input_file == None and options.input_path == None) or options.output_file == None:
 		parser.error("Required options are missing")
 	if options.input_file != None and options.input_path == None:
-		print "converting %s > %s (%s delimited)" % (options.input_file, options.output_file, delimiter_string)
+		print("converting %s > %s (%s delimited)" % (options.input_file, options.output_file, delimiter_string))
 		VcfToCsvConverter(options.input_file, options.input_path, options.output_file, delimiter, options.quote, options.trace, options.verbose)
 		sys.exit(0)
 	elif options.input_file == None and options.input_path != None:
-		print "converting files within path: %s > %s (%s delimited)" % (options.input_path, options.output_file, delimiter_string)
+		print("converting files within path: %s > %s (%s delimited)" % (options.input_path, options.output_file, delimiter_string))
 		VcfToCsvConverter(options.input_file, options.input_path, options.output_file, delimiter, options.quote, options.trace, options.verbose)
 		sys.exit(0)
 
