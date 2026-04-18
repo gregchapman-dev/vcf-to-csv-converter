@@ -323,13 +323,13 @@ class VcfToCsvConverter:
 		address = ''
 		city = ''
 		state = ''
-		zip = ''
+		zipcode = ''
 		country = ''
 		try:
-			(a, b, address, city, state, zip, country ) = re.split("(?<!\\\\);",p)
+			(a, b, address, city, state, zipcode, country ) = re.split("(?<!\\\\);",p)
 		except ValueError:
 			try:
-				(a, b, address, city, state, zip ) = re.split("(?<!\\\\);",p)
+				(a, b, address, city, state, zipcode ) = re.split("(?<!\\\\);",p)
 			except Exception:
 				pass
 			country = '';
@@ -351,7 +351,7 @@ class VcfToCsvConverter:
 			self.data["%s ADDRESS %s" % (addressType, self.addressCount[addressType])] = address
 			self.data["%s CITY %s" % (addressType, self.addressCount[addressType])] = city
 			self.data["%s STATE %s" % (addressType, self.addressCount[addressType])] = state
-			self.data["%s ZIP %s" % (addressType, self.addressCount[addressType])] = zip
+			self.data["%s ZIP %s" % (addressType, self.addressCount[addressType])] = zipcode
 			self.data["%s COUNTRY %s" % (addressType, self.addressCount[addressType])] = country
 			self.addressCount[addressType] += 1
 		else:
@@ -408,10 +408,13 @@ class VcfToCsvConverter:
 		self.columns = (
 			'WARNING',
 			'FORMATTED NAME',
-			# 'NAME PREFIX',
+			'NAME PREFIX',
 			'NAME FIRST', 'NAME MIDDLE', 'NAME LAST',
-			# 'NAME POSTFIX', 'NICKNAME', 'BIRTHDAY', 'PHOTO',
-			# 'ORGANIZATION', 'TITLE', 'ROLE', 'LOGO URL',
+			'NAME POSTFIX',
+			# 'NICKNAME', 'BIRTHDAY', 'PHOTO',
+			'ORGANIZATION',
+			# 'TITLE', 'ROLE',
+			# 'LOGO URL',
 			# 'MAILER',
 			# 'HOME ADDRESS 1', 'HOME CITY 1', 'HOME STATE 1', 'HOME ZIP 1', 'HOME COUNTRY 1',
 			# 'HOME ADDRESS 2', 'HOME CITY 2', 'HOME STATE 2', 'HOME ZIP 2', 'HOME COUNTRY 2',
